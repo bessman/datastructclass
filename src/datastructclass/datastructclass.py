@@ -25,9 +25,6 @@ else:
         return decorator
 
 
-__version__ = "0.1.0"
-
-
 @dataclass
 @dataclass_transform()
 class DataStructClass:
