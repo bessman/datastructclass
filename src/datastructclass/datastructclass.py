@@ -1,8 +1,9 @@
 """A DataStructClass is a dataclass with struct-like semantics for serialization."""
 
+from __future__ import annotations
+
 import struct
 import sys
-from collections.abc import Iterable
 from dataclasses import astuple, dataclass, fields
 from itertools import islice
 from struct import Struct
@@ -11,15 +12,14 @@ from typing import ClassVar
 if sys.version_info >= (3, 11):
     from typing import Self, dataclass_transform
 else:
-    from typing import Any, Callable, TypeVar
+    from typing import Any
 
     Self = Any
-    _T = TypeVar("_T")
 
-    def dataclass_transform() -> Callable[[_T], _T]:
+    def dataclass_transform() -> Any:  # noqa: ANN401
         """Noop decorator to support <python3.11."""
 
-        def decorator(cls_or_fn: Callable[[_T], _T]) -> Callable[[_T], _T]:
+        def decorator(cls_or_fn: Any) -> Any:  # noqa: ANN401
             return cls_or_fn
 
         return decorator
@@ -113,10 +113,10 @@ class DataStructClass:
         for typ, ser in cls._annotations:
             arg = ser.unpack(bytes(islice(iterbuf, ser.size)))
 
-            if isinstance(typ, Iterable):
-                args += [typ(arg)]
-            else:
+            try:
                 args += [typ(*arg)]
+            except TypeError:
+                args += [typ(arg)]
 
         return cls(*args)
 
@@ -130,7 +130,10 @@ class DataStructClass:
         """
         ret = b""
 
-        for (typ, ser), val in zip(self._annotations, astuple(self)):
-            ret += ser.pack(*val) if isinstance(typ, Iterable) else ser.pack(val)
+        for (_, ser), val in zip(self._annotations, astuple(self)):
+            try:
+                ret += ser.pack(*val)
+            except (struct.error, TypeError):  # noqa: PERF203
+                ret += ser.pack(val)
 
         return ret
