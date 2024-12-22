@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.1.2] - Development
+
 ## [0.1.1] - 2024-12-22
 
 ### Added
