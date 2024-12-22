@@ -1,0 +1,61 @@
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "datastructclass"
+authors = [{name = "Alexander Bessman", email = "alexander.bessman@gmail.com"}]
+dynamic = ["version", "description"]
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+]
+keywords = [
+    "dataclass",
+    "serialization",
+    "struct",
+]
+
+[project.urls]
+Home = "https://github.com/bessman/datastructclass/"
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "coverage",
+]
+dev = [
+    "black",
+    "isort",
+    "mypy",
+    "ruff",
+    "tox",
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203",  # one-blank-line-before-class
+    "D213",  # multi-line-summary-second-line
+    "G004",  # logging-f-string
+    "N818",  # error-suffix-on-exception-name
+    "S101",  # assert
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/{tests}/*" = ["ALL"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
